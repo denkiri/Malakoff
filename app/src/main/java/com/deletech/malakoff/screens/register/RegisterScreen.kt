@@ -46,7 +46,7 @@ fun RegisterScreen(navController: NavHostController, viewModel: RegisterViewMode
     }
     val authState by viewModel.registerRequestResult.collectAsState()
     LaunchedEffect(authState) {
-        if (authState is Resource.Success && authState.data?.data != null) {
+        if (authState is Resource.Success) {
              navController.navigate("login")
             viewModel.resetStates()
         }
