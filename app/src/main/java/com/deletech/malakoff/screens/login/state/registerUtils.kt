@@ -23,6 +23,14 @@ val confirmPasswordEmptyErrorState = ErrorState(
     hasError = true,
     errorMessageStringResource = R.string.login_error_msg_confirm_password
 )
+val projectNameEmptyErrorState = ErrorState(
+    hasError = true,
+    errorMessageStringResource = R.string.project_name_error_msg
+)
+val projectDescriptionEmptyErrorState = ErrorState(
+    hasError = true,
+    errorMessageStringResource = R.string.project_description_error_msg
+)
 val loginErrorState = ErrorState(
     hasError = true,
     errorMessageStringResource = R.string.login_error_user_not_found

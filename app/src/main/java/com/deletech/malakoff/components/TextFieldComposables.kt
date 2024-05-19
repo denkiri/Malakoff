@@ -333,6 +333,82 @@ fun PhoneTextField(
         )
     )
 }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProjectNameTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    isError: Boolean = false,
+    errorText: String = "",
+    imeAction: ImeAction = ImeAction.Next
+) {
+    val isDarkTheme = isSystemInDarkTheme()
+    val textColor = if (isDarkTheme) Color.White else Color.Black
+    OutlinedTextField(
+        modifier = modifier,
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(text = label, style = TextStyle(color = textColor)) },
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = imeAction
+        ),
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                ErrorTextInputField(text = errorText)
+            }
+        },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor,
+            focusedBorderColor = textColor,
+            unfocusedBorderColor = textColor,
+            unfocusedTextColor = textColor,
+            cursorColor = textColor,
+        )
+    )
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProjectDescriptionTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    isError: Boolean = false,
+    errorText: String = "",
+    imeAction: ImeAction = ImeAction.Next
+) {
+    val isDarkTheme = isSystemInDarkTheme()
+    val textColor = if (isDarkTheme) Color.White else Color.Black
+    OutlinedTextField(
+        modifier = modifier,
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(text = label, style = TextStyle(color = textColor)) },
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = imeAction
+        ),
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                ErrorTextInputField(text = errorText)
+            }
+        },
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor,
+            focusedBorderColor = textColor,
+            unfocusedBorderColor = textColor,
+            unfocusedTextColor = textColor,
+            cursorColor = textColor,
+        )
+    )
+}
 @Preview
 @Composable
 fun UsernameTextFieldPreview() {

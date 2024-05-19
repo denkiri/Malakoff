@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.deletech.malakoff.screens.home.HomeScreen
 import com.deletech.malakoff.screens.home.HomeViewModel
+import com.deletech.malakoff.screens.home.project.CreateProjectScreen
 import com.deletech.malakoff.screens.login.LoginScreen
 import com.deletech.malakoff.screens.login.LoginViewModel
 import com.deletech.malakoff.screens.register.RegisterScreen
@@ -34,6 +35,10 @@ fun AppNavigation() {
         composable("home_screen") {
             val homeViewModel = hiltViewModel<HomeViewModel>()
             HomeScreen(navController = navController, viewModel = homeViewModel)
+        }
+        composable("create_project") {
+            val homeViewModel = hiltViewModel<HomeViewModel>()
+            CreateProjectScreen(navController = navController, viewModel = homeViewModel)
         }
 
 }}

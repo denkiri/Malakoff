@@ -18,7 +18,10 @@
     <string name="sit_back_amp_relax_while_we_verify_your_mobile_number"><![CDATA[Sit back & Relax! while we verify your mobile number]]></string>
     <string name="verify">Verify</string>
     <string name="login_heading_text">Enter your credentials</string>
+    <string name="create_project_heading_text">Create Project</string>
     <string name="username">Username/Email</string>
+    <string name="project_name">Project Name</string>
+    <string name="project_description">Project Description</string>
     <string name="user">Username</string>
     <string name="email">Email</string>
     <string name="phone">Phone</string>
@@ -26,6 +29,7 @@
     <string name="confirm_password_label">Confirm Password</string>
     <string name="change_password_label">Change Pin</string>
     <string name="login_button_text">Login</string>
+    <string name="create_button_text">Create Project</string>
     <string name="register_button_text">Register</string>
     <string name="generate_otp">Generate OTP</string>
     <string name="verify_otp">Verify OTP</string>
@@ -38,6 +42,8 @@
     <string name="msg_empty_username">Please enter your Username</string>
     <string name="login_error_msg_empty_password">Please enter your Password</string>
     <string name="login_error_msg_confirm_password">Please Confirm Password</string>
+    <string name="project_name_error_msg">Please Enter Project Name</string>
+    <string name="project_description_error_msg">Please Enter Description</string>
     <string name="login_error_msg_empty_phone">Please enter your Phone</string>
     <string name="login_error_user_not_found">User not found </string>
     <string name="navigate_back">Navigate to the previous screen</string>

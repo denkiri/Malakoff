@@ -3,6 +3,7 @@ package com.deletech.malakoff.screens.home
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.deletech.malakoff.R
 import com.deletech.malakoff.components.Loader
 import com.deletech.malakoff.components.Toast
@@ -135,7 +137,9 @@ fun ProjectCardView(projects: Projects?,navController: NavHostController) {
     }
 }
 @Composable
-fun AddProjectCard(){
+fun AddProjectCard(
+    navController: NavHostController,
+){
     val context = LocalContext.current
     val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) Color.Black else Color.White
@@ -167,18 +171,23 @@ fun AddProjectCard(){
                             textAlign = TextAlign.Center,
                             color = textColor
                         )
-                Image(
+                Box(
                     modifier = Modifier
                         .size(100.dp)
-                        .padding(10.dp),
-                    painter = painterResource(id = R.drawable.baseline_add_24),
-                    contentDescription = "app Logo"
-                )
+                        .padding(10.dp)
+                        .clickable {
+                            navController.navigate("create_project")
+                        }
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .padding(10.dp),
+                        painter = painterResource(id = R.drawable.baseline_add_24),
+                        contentDescription = "app Logo"
 
-
-
-
-
+                    )
+                }
             }
 
 
@@ -250,7 +259,7 @@ private fun Dashboard(
 
 ) {
     Column {
-       AddProjectCard()
+       AddProjectCard(navController)
         ProjectCardView(reportState.data, navController)
     }
 }
@@ -258,7 +267,7 @@ private fun Dashboard(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview
 fun AddProjectCardPreview(){
-    AddProjectCard()
+    AddProjectCard(rememberNavController())
 
 }
 @Composable
