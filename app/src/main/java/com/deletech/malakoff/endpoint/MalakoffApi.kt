@@ -4,6 +4,7 @@ import com.deletech.malakoff.models.login.LoginResponse
 import com.deletech.malakoff.models.projects.CreateProject
 import com.deletech.malakoff.models.projects.CreateProjectResponse
 import com.deletech.malakoff.models.projects.Projects
+import com.deletech.malakoff.models.projects.archiveProject.ArchiveProjectResponse
 import com.deletech.malakoff.models.register.RegisterDetails
 import com.deletech.malakoff.models.register.RegisterResponse
 import retrofit2.Call
@@ -19,6 +20,9 @@ interface MalakoffApi {
     fun projects(@Header("Authorization") authToken:String?): Call<Projects>
     @POST("projects")
     fun createProject(@Header("Authorization") authToken:String?,@Body createProject : CreateProject): Call<CreateProjectResponse>
+    @DELETE("projects/{id}")
+    fun deleteProject(@Header("Authorization") authToken:String?,@Path("id") projectId: String): Call<ArchiveProjectResponse>
+
 }
 
 

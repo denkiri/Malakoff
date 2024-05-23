@@ -57,7 +57,6 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
     val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) Color.Black else Color.White
     val textColor = if (isDarkTheme) Color.White else Color.Black
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -83,15 +82,16 @@ fun HomeScreen(navController: NavHostController, viewModel: HomeViewModel = hilt
                 .background(color = backgroundColor)
                 .padding(innerPadding)
         ) {
-
-UiSetup(viewModel = viewModel, navController = navController)
-
+            Column {
+                AddProjectCard(navController = navController)
+                ProjectsSetUp(viewModel = viewModel, navController = navController)
+            }
         }
     }
 
 }
 @Composable
-private fun UiSetup(
+private fun ProjectsSetUp(
     viewModel: HomeViewModel,
     navController: NavHostController,
 ) {
@@ -108,8 +108,7 @@ private fun UiSetup(
     when (projectState) {
         is Resource.Success -> {
             if (projectState.data != null) {
-                Dashboard(navController, projectState)
-
+                ProjectsList(navController, projectState,viewModel)
             }
         }
         is Resource.Error -> {
@@ -120,18 +119,20 @@ private fun UiSetup(
         is Resource.Loading -> {
             Loader()
         }
+        else -> {}
     }
+
 
 }
 @Composable
-fun ProjectCardView(projects: Projects?,navController: NavHostController) {
+fun ProjectCardView(projects: Projects?,navController: NavHostController,viewModel: HomeViewModel) {
     LazyColumn(
         modifier = Modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         projects?.data?.forEach { project ->
             item {
-                ProjectCard(project = project, navController = navController)
+                ProjectCard(project = project, navController = navController, viewModel =viewModel )
             }
         }
     }
@@ -196,11 +197,30 @@ fun AddProjectCard(
 
 }
 @Composable
-fun ProjectCard(project:Data?,navController: NavHostController){
+fun ProjectCard(project:Data?,navController: NavHostController,viewModel: HomeViewModel ){
     val scope = rememberCoroutineScope()
     val isDarkTheme = isSystemInDarkTheme()
+    val context = LocalContext.current
+    val accessToken = PreferenceManager(context).getAccessToken()
     val backgroundColor = if (isDarkTheme) Color.Black else Color.White
     val textColor = if (isDarkTheme) Color.White else Color.Black
+    val deleteState by viewModel.deleteProjectRequestResult.collectAsState()
+    when (deleteState) {
+        is Resource.Success -> {
+            Toast(message = deleteState.data?.message.toString())
+        }
+        is Resource.Error -> {
+            Toast(message = deleteState.message.toString())
+        }
+
+        is Resource.Idle -> {}
+        is Resource.Loading -> {
+
+        }
+
+        else -> {}
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -247,21 +267,67 @@ fun ProjectCard(project:Data?,navController: NavHostController){
                     )
 
                 }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                )
+                {
+                    Box(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(10.dp)
+                            .clickable {
+                                viewModel.deleteProject("Bearer $accessToken", "${project?.Uuid}")
+                            })
+                    {
+                        Image(
+                        painter = painterResource(id = R.drawable.baseline_delete_24),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp, 40.dp)
+
+                    )
+                }
+                }
             }
 
         }}
 
 }
 @Composable
-private fun Dashboard(
+private fun ProjectsList(
     navController: NavHostController,
-    reportState: Resource<Projects>
-
+    reportState: Resource<Projects>,
+    viewModel: HomeViewModel
 ) {
-    Column {
-       AddProjectCard(navController)
-        ProjectCardView(reportState.data, navController)
+    val context = LocalContext.current
+    val accessToken = PreferenceManager(context).getAccessToken()
+    val projectState by viewModel.projectReportRequestResult.collectAsState()
+    LaunchedEffect(projectState) {
+        if (projectState is Resource.Idle) {
+            viewModel.getProjects(
+                "Bearer $accessToken"
+            )
+        }
     }
+    when (projectState) {
+        is Resource.Success -> {
+            if (projectState.data != null) {
+                ProjectCardView(reportState.data, navController, viewModel = viewModel)
+            }
+        }
+        is Resource.Error -> {
+            Toast(message = projectState.message.toString())
+        }
+
+        is Resource.Idle -> {}
+        is Resource.Loading -> {
+            Loader()
+        }
+        else -> {}
+    }
+
+
 }
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -274,6 +340,6 @@ fun AddProjectCardPreview(){
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview
 fun ProjectCardPreview(){
-  //  ProjectCard()
+
 
 }

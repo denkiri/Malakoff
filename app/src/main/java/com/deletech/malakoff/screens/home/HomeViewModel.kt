@@ -1,20 +1,16 @@
 package com.deletech.malakoff.screens.home
-
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deletech.malakoff.components.ErrorState
 import com.deletech.malakoff.data.Resource
-import com.deletech.malakoff.models.login.LoginResponse
 import com.deletech.malakoff.models.projects.CreateProjectResponse
 import com.deletech.malakoff.models.projects.Projects
+import com.deletech.malakoff.models.projects.archiveProject.ArchiveProjectResponse
 import com.deletech.malakoff.repository.HomeRepository
 import com.deletech.malakoff.screens.home.project.state.ProjectErrorState
 import com.deletech.malakoff.screens.home.project.state.ProjectState
 import com.deletech.malakoff.screens.home.project.state.ProjectUiEvent
-import com.deletech.malakoff.screens.login.state.LoginErrorState
-import com.deletech.malakoff.screens.login.state.LoginState
-import com.deletech.malakoff.screens.login.state.LoginUiEvent
 import com.deletech.malakoff.screens.login.state.emailEmptyErrorState
 import com.deletech.malakoff.screens.login.state.passwordEmptyErrorState
 import com.deletech.malakoff.screens.login.state.projectDescriptionEmptyErrorState
@@ -51,7 +47,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun resetStates() {
         projectState.value = ProjectState()
     }
-
     val isLoading: StateFlow<Boolean> = _isLoading
     private fun validateInputs(): Boolean {
         val projectNameString = projectState.value.projectName.trim()
@@ -108,12 +103,10 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     )
                 )
             }
-
             is ProjectUiEvent.Submit -> {
                 val inputsValidated = validateInputs()
                 if (inputsValidated) {
                     isLoading
-                    // TODO Trigger login in authentication flow
                     projectState.value =  projectState.value.copy(isProjectSuccessful = true)
 
 
@@ -138,6 +131,27 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             } catch (e: Exception) {
                 _isLoading.value = false
                 _createProjectRequestResult.value = Resource.Error(" failed: ${e.message}")
+            }
+        }
+    }
+    private val _archiveProjectRequestResult = MutableStateFlow<Resource<ArchiveProjectResponse>>(Resource.Idle())
+    val deleteProjectRequestResult: StateFlow<Resource<ArchiveProjectResponse>> = _archiveProjectRequestResult
+    fun deleteProject(token:String,projectId: String) {
+        viewModelScope.launch {
+            _archiveProjectRequestResult.value = Resource.Loading()
+            try {
+                val archiveProjectResponse = repository.deleteProject(token,projectId)
+                if (archiveProjectResponse is Resource.Success) {
+                    getProjects(token)
+                    _isLoading.value = false
+                    _archiveProjectRequestResult.value = Resource.Success(archiveProjectResponse.data!!)
+                } else {
+                    _archiveProjectRequestResult.value = Resource.Error(archiveProjectResponse.message)
+                    _isLoading.value = false
+                }
+            } catch (e: Exception) {
+                _isLoading.value = false
+                _archiveProjectRequestResult.value = Resource.Error(" failed: ${e.message}")
             }
         }
     }

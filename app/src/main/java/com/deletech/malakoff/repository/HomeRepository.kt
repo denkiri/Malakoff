@@ -13,6 +13,8 @@ import com.deletech.malakoff.models.projects.CreateProject
 import com.deletech.malakoff.models.projects.CreateProjectResponse
 import com.deletech.malakoff.models.projects.FormError
 import com.deletech.malakoff.models.projects.Projects
+import com.deletech.malakoff.models.projects.archiveProject.ArchiveProjectResponse
+import com.deletech.malakoff.models.projects.archiveProject.ErrorResponse
 import com.google.gson.Gson
 import retrofit2.await
 import retrofit2.awaitResponse
@@ -74,6 +76,36 @@ class HomeRepository @Inject constructor(private val api: MalakoffApi, applicati
                         val errorResponse = Gson().fromJson(it, FormError::class.java)
                         errorResponse.message
                     } ?: "Server error"
+                    Resource.Error(message = errorMessage)
+                }
+                else -> {
+                    Resource.Error(message = "Unexpected response code ${response.code()}")
+                }
+            }
+        } catch (exception: Exception) {
+            Resource.Error(message = exception.message ?: "An unknown error occurred")
+        }
+    }
+    suspend fun deleteProject(authToken:String?,projectId: String): Resource<ArchiveProjectResponse> {
+        return try {
+            Resource.Loading(data = true)
+            val response = api.deleteProject(authToken,projectId).awaitResponse()
+            Resource.Loading(data = false)
+            when (response.code()) {
+                200 -> {
+                    val body = response.body()
+                    if (body != null && body.code == 0) {
+                        Resource.Success(data = body)
+                    } else {
+                        Resource.Error(message = body?.message ?: "Unknown error")
+                    }
+                }
+                404 -> {
+                    val errorBody = response.errorBody()?.string()
+                    val errorMessage = errorBody?.let {
+                        val errorResponse = Gson().fromJson(it, ErrorResponse::class.java)
+                        errorResponse.message
+                    } ?: "Not Found"
                     Resource.Error(message = errorMessage)
                 }
                 else -> {
